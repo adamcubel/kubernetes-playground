@@ -30,6 +30,13 @@ RUN wget --quiet https://releases.hashicorp.com/terraform-provider-null/${TERRAF
     && unzip -q terraform_null_provider.zip -d /terraform_providers/registry.terraform.io/hashicorp/null/${TERRAFORM_NULL_PROVIDER_VERSION}/linux_amd64/ \
     && rm terraform_null_provider.zip
 
+# Install the AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && mkdir -p /tmp/awscli \
+    && unzip /tmp/awscliv2.zip -d /tmp/awscli \
+    && /tmp/awscli/aws/install \
+    && rm -f /tmp/awscliv2.zip \
+    && rm -rf /tmp/awscli
+
 USER terraform
 
 HEALTHCHECK --interval=30s --timeout=10s \

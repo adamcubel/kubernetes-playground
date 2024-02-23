@@ -1,0 +1,33 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+privateCluster:
+  enabled: true
+  additionalEndpointServices:
+  # For Cluster Autoscaler
+  - "autoscaling"
+  # CloudWatch logging
+  - "logs"
+
+metadata:
+  name: eks-acg
+  region: us-east-1
+  version: "1.25"
+
+vpc:
+  subnets:
+    private:
+      us-east-1a:
+        id: <subnet ID>
+      us-east-1b:
+        id: <subnet ID>
+      us-east-1c:
+        id: <subnet ID>
+nodeGroups:
+  - name: eks-node-group
+    instanceType: t3.medium
+    desiredCapacity: 2
+    privateNetworking: true
+    volumeSize: 30
+
+availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1c"] # This is required since in us-east-1 only 2 subnets are created by default (https://eksctl.io/usage/vpc-networking/)

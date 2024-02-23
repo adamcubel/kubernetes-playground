@@ -6,4 +6,5 @@ Terraform Docker Image for deployment relies on Iron Bank Terraform Image:
 The image can be pulled using the following instructions:
 - https://docs-ironbank.dso.mil/tutorials/image-pull/
 
-For simplicity, a devcontainer has been built up within this repo to allow developers to 
+For simplicity, a devcontainer has been built up within this repo to allow developers simple access to Terraform.
+Terraform will be used to manage the EKS infrastructure used to deploy Kubernetes clusters within your AWS account.

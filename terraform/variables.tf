@@ -12,6 +12,11 @@ variable "vpc_id" {
   type = string
 }
 
+variable "subnet_ids" {
+  description = "List of subnet IDs to use when deploying the cluster"
+  default = []
+}
+
 variable "cluster_suffix" {
   description = "suffix for cluster to ensure uniqueness in naming"
   type = string
@@ -27,4 +32,9 @@ variable "eks_cluster_version" {
   description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.27`)"
   type = string
   default = "1.29"
+}
+
+variable "tags" {
+  description = "collection of tags used for resources deployed in this module"
+  default = {}
 }

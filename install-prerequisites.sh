@@ -2,18 +2,21 @@
 
 # Start with RHEL 9 VM
 
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+
 
 # Install the packages that we can get from DNF package manager
 sudo dnf update -y
 sudo dnf install -y \
                 git \
-                unzip
+                unzip \
+                nano
 
-systemctl --user enable --now podman.socket
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# systemctl --user enable --now podman.socket
 # or podman system service --time=0
 XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
@@ -55,6 +58,8 @@ kubectl cluster-info
 
 # Create the NiFi Application in the cluster
 git clone https://github.com/adamcubel/kubernetes-playground.git
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add dysnix https://dysnix.github.io/charts/
 cd helm/nifi
 helm repo update
 helm dep up

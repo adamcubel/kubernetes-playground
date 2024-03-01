@@ -1,10 +1,27 @@
 #!/bin/bash
 
+# Start with RHEL 9 VM
+
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 # Install the packages that we can get from DNF package manager
 sudo dnf update -y
 sudo dnf install -y \
                 git \
-                docker
+                unzip
+
+systemctl --user enable --now podman.socket
+# or podman system service --time=0
+XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+
+# Install Docker
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Configure docker for the ec2-user
 sudo systemctl enable docker.service
@@ -23,7 +40,7 @@ brew install kubernetes-cli
 # Install helm
 curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 /tmp/get_helm.sh
-/tmp/get_helm.sh
+/tmp/get_helm.sh && rm /tmp/get_helm.sh
 
 # Install zarf - https://www.youtube.com/watch?v=7X2znDbN4-E&t=5s
 # brew tap defenseunicorns/tap && brew install zarf
@@ -34,23 +51,34 @@ brew install k3d k3sup
 
 # Creating the Kubernetes cluster locally using k3d
 k3d cluster create -p "443:8443@loadbalancer" --agents 2
+kubectl cluster-info
+
+# Create the NiFi Application in the cluster
 git clone https://github.com/adamcubel/kubernetes-playground.git
 cd helm/nifi
 helm repo update
 helm dep up
 helm install nifi .
 
+# Troubleshooting commands
 kubectl get nodes
-kubectl cluster-info
-helm status nifi --show-resources
 kubectl get pods
-
-# Gets ports forwarded
-kubectl get svc --all-namespaces -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}{{end}}'
+helm status nifi --show-resources
 
 # Forwarding and testing status
 kubectl port-forward -n default svc/nifi 8443:8443 &
 curl -k https://localhost:8443/nifi/
+
+# Exporting the VM
+{
+    "ContainerFormat": "ova",
+    "DiskImageFormat": "VMDK",
+    "S3Bucket": "cubel-bucket-1234",
+    "S3Prefix": "vms/"
+}
+
+
+aws ec2 create-instance-export-task --instance-id i-0fd46c563f09da376 --target-environment vmware --export-to-s3-task file://"file.json"
 
 # TODO FOR EKS:
 # Set the role for which to create the cluster on the deployment VM

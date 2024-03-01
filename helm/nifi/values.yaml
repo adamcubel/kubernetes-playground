@@ -113,6 +113,8 @@ properties:
     nifi.web.http.network.interface.default: eth0
     # listen to loopback interface so "kubectl port-forward ..." works
     nifi.web.http.network.interface.lo: lo
+    # NiFi routes
+    nifi.web.proxy.context.path: /demo, /demo/nifi
 
   ## Include aditional processors
   # customLibPath: "/opt/configuration_resources/custom_lib"
@@ -191,7 +193,7 @@ headless:
 
 # ui service
 service:
-  type: ClusterIP
+  type: LoadBalancer
   httpsPort: 8443
   # nodePort: 30236
   annotations: {}
@@ -228,12 +230,12 @@ containerPorts: []
 ## Configure Ingress based on the documentation here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
-  enabled: false
-  # className: nginx
-  annotations: {}
-  tls: []
-  hosts: []
-  path: /
+  enabled: true
+  path: /demo
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+    ingress.kubernetes.io/custom-request-headers: X-ProxyContextPath:/demo||X-ProxyPort:80||X-ProxyScheme:http
   # If you want to change the default path, see this issue https://github.com/cetic/helm-nifi/issues/22
 
 # Amount of memory to give the NiFi java heap

@@ -10,6 +10,7 @@ sudo dnf install -y \
                 git \
                 unzip \
                 nano
+sudo dnf groupinstall -y 'Development Tools'
 
 # Install AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -18,24 +19,27 @@ sudo ./aws/install
 
 # systemctl --user enable --now podman.socket
 # or podman system service --time=0
-XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+# XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+# export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 
 # Install Docker
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Configure docker for the ec2-user
 sudo systemctl enable docker.service
 sudo systemctl start docker.service
 sudo usermod -a -G docker ec2-user
-su - $USER # relogin to the session to absorb the user group changes
+# su - $USER # relogin to the session to absorb the user group changes
 
 # Install Homebrew
 CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ec2-user/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Install Terraform
+brew install terraform
 
 # Install kubectl
 brew install kubernetes-cli

@@ -54,7 +54,7 @@ module "eks" {
   cluster_version = var.eks_cluster_version
 
   vpc_id                         = data.aws_vpc.cluster_vpc.id
-  subnet_ids                     = var.aws_subnet_ids
+  subnet_ids                     = var.subnet_ids
   cluster_endpoint_public_access = false
   cluster_endpoint_private_access = true
   cluster_additional_security_group_ids = [aws_security_group.eks.id]

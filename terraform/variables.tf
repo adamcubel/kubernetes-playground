@@ -23,11 +23,6 @@ variable "cluster_suffix" {
   default = "playground"
 }
 
-variable "eks_access_entries" {
-  description = "Map of access entries to add to the cluster"
-  default = {}
-}
-
 variable "eks_cluster_version" {
   description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.27`)"
   type = string

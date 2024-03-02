@@ -47,4 +47,10 @@ Must have S3 bucket
 Must add bucket ACL for AWS
 
 
-Helm will be used to c
+Helm will be used to create the NiFi application by provisioning nodes / pods in the cluster.
+
+
+After deploying the Terraform, use the following command to configure the Kubectl 
+
+aws eks --region $(terraform output -raw region) update-kubeconfig \
+    --name $(terraform output -raw cluster_name)

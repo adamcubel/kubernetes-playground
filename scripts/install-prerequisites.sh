@@ -22,7 +22,10 @@ sudo ./aws/install
 # XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 
-# Install Docker
+# Install Docker on Amazon Linux
+sudo dnf install -y docker
+
+# Install Docker for RHEL9
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
 sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -87,7 +90,16 @@ curl -k https://localhost:8443/nifi/
 }
 
 
-aws ec2 create-instance-export-task --instance-id i-0fd46c563f09da376 --target-environment vmware --export-to-s3-task file://"file.json"
+# TODO: Take these export commands and put them into a separate script
+cat > ./file.json << EOF
+{
+    "ContainerFormat": "ova",
+    "DiskImageFormat": "VMDK",
+    "S3Bucket": "cubel-bucket-1234",
+    "S3Prefix": "vms/"
+}
+EOF
+aws ec2 create-instance-export-task --instance-id <instance ID> --target-environment vmware --export-to-s3-task file://"file.json"
 
 # TODO FOR EKS:
 # Set the role for which to create the cluster on the deployment VM

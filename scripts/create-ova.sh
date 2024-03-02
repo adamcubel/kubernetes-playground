@@ -4,7 +4,6 @@
 
 s3_bucket=${s3_bucket:-"nifi-demo-$RANDOM"} # This is set within the Dockerfile
 environment=${environment:-"default"}
-instance_id=${instance_id:-"$(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)"}
 
 while [ $# -gt 0 ]; do
    if [[ $1 == *"--"* ]]; then
@@ -44,6 +43,6 @@ cat > ./file.json << EOF
 }
 EOF
 
-set -x
-aws ec2 create-instance-export-task --instance-id $instance_id --target-environment vmware --export-to-s3-task file://"file.json"
-set +x
+INSTANCE_ID=$(cat /var/lib/cloud/data/instance-id)
+echo "aws ec2 create-instance-export-task --instance-id $INSTANCE_ID --target-environment vmware --export-to-s3-task file://\"file.json\""
+aws ec2 create-instance-export-task --instance-id $INSTANCE_ID --target-environment vmware --export-to-s3-task file://"file.json"

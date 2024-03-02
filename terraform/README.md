@@ -17,20 +17,6 @@ From here, you can make sure that the AWS CLI is installed and that an EC2 role 
 In ACloudGuru, you need the following permissions:
 - allow_all
 - Playground_AWS_Sandbox
-- aws_assume_role
-    ```
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": "sts:AssumeRole",
-                "Resource": "*"
-            }
-        ]
-    }
-    ```
 
 Ensure that the Role has the following Trust Policy:
 ```

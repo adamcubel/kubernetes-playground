@@ -1,4 +1,4 @@
-vpc_id = "vpc-02e7e9d487efb52c2"
+vpc_id = "vpc-072daeae383c72b16"
 region = "us-east-1"
-cluster_suffix = "cubel"
-subnet_ids = ["subnet-031465bf3d81c7d5f", "subnet-079a393bdb691c086", "subnet-05f344752a6acd21a"]
+cluster_suffix = "sisyphus"
+subnet_ids = ["subnet-0e86717d47f340030", "subnet-00789da9a1263eef6", "subnet-09b3802bf548c3f95"]

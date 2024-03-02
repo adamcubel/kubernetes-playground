@@ -7,7 +7,8 @@ sudo dnf update -y
 sudo dnf install -y \
                 git \
                 unzip \
-                nano
+                nano \
+                jq
 sudo dnf groupinstall -y 'Development Tools'
 
 # Install AWS CLI

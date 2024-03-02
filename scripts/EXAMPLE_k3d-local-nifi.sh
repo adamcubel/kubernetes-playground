@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # TODO: This should just be instructions for a quick and dirty demo on localhost 
 #       after installing the prerequisites
 
@@ -16,8 +17,8 @@ helm dep up
 helm install nifi .
 
 # Troubleshooting commands
-# kubectl get nodes
-# kubectl get pods
-# helm status nifi --show-resources
+kubectl get nodes
+kubectl get pods
+helm status nifi --show-resources
 
 # Go to https://localhost/nifi/

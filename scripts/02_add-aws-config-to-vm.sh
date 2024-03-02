@@ -1,9 +1,8 @@
 #!/bin/bash
 
 region=${region:-"us-east-1"}
-iam_role=${iam_role:-"ec2Deploy"}
+iam_role=${iam_role:-"InstanceOpsRole"}
 policy_filename=${policy_filename:-"trust-policy.json"}
-
 
 while [ $# -gt 0 ]; do
    if [[ $1 == *"--"* ]]; then

@@ -6,8 +6,8 @@ replicaCount: 1
 ## ref: https://hub.docker.com/r/apache/nifi/
 ##
 image:
-  repository: registry1.dso.mil/ironbank/opensource/apache/nifi
-  tag: "1.25.0"
+  repository: apache/nifi
+  tag: "1.23.2"
   pullPolicy: "IfNotPresent"
 
   ## Optionally specify an imagePullSecret.
@@ -114,7 +114,7 @@ properties:
     # listen to loopback interface so "kubectl port-forward ..." works
     nifi.web.http.network.interface.lo: lo
     # NiFi routes
-    nifi.web.proxy.context.path: /nifi
+    nifi.web.proxy.context.path: /demo, /demo/nifi
 
   ## Include aditional processors
   # customLibPath: "/opt/configuration_resources/custom_lib"
@@ -231,29 +231,11 @@ containerPorts: []
 ##
 ingress:
   enabled: true
-  hosts: ["dummy.nifi.cubel"]
-  path: /
+  path: /demo
   annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internal
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-0e86717d47f340030,subnet-00789da9a1263eef6
-    # alb.ingress.kubernetes.io/certificate-arn: acm_ssl_arn
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-    alb.ingress.kubernetes.io/group.name: nifi
-    alb.ingress.kubernetes.io/actions.ssl-redirect: >-
-        {
-            "Type": "redirect",
-            "RedirectConfig": {
-                "Protocol": "HTTPS",
-                "Port": "443",
-                "Host": "#{host}",
-                "Path": "/#{path}",
-                "Query": "#{query}",
-                "StatusCode": "HTTP_301"
-            }
-        }
-
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+    ingress.kubernetes.io/custom-request-headers: X-ProxyContextPath:/demo||X-ProxyPort:80||X-ProxyScheme:http
   # If you want to change the default path, see this issue https://github.com/cetic/helm-nifi/issues/22
 
 # Amount of memory to give the NiFi java heap

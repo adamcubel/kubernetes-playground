@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Start with amazonlinux or RHEL 9 VM
+# TODO: Add a switch that the caller can use to flip back and forth
 
 # Install the packages that we can get from DNF package manager
 sudo dnf update -y

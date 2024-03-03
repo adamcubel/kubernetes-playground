@@ -50,8 +50,13 @@ chmod 700 /tmp/get_helm.sh
 /tmp/get_helm.sh && rm /tmp/get_helm.sh
 
 # Install k3d for minimal Kubernetes to run inside docker
+# k9s is a kubernetes GUI tool
 brew install k3d k3sup k9s
 
 # Install zarf - https://www.youtube.com/watch?v=7X2znDbN4-E&t=5s
-# brew tap defenseunicorns/tap && brew install zarf
+brew tap defenseunicorns/tap && brew install zarf
 # zarf init - initializes cluster
+
+git clone https://github.com/adamcubel/kubernetes-playground.git
+
+sudo reboot

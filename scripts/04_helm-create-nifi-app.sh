@@ -28,9 +28,9 @@ if [[ "$env" == "low" ]]; then
     # Will be prompted for username and password
     # Instructions for getting an iron bank account are here: 
     # https://docs-ironbank.dso.mil/quickstart/consumer-onboarding/
-    docker login registry1.dso.mil
-    docker pull registry1.dso.mil/ironbank/opensource/apache/nifi:1.25.0
-    docker pull registry1.dso.mil/ironbank/bitnami/zookeeper:3.9.1
+    sudo docker login registry1.dso.mil
+    sudo docker pull registry1.dso.mil/ironbank/opensource/apache/nifi:1.25.0
+    sudo docker pull registry1.dso.mil/ironbank/bitnami/zookeeper:3.9.1
 
     curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 else
@@ -108,17 +108,17 @@ fi
 
 kubectl apply -f aws-load-balancer-controller-service-account.yaml
 
-# if [[ "$env" == "low" ]]; then
+if [[ "$env" == "low" ]]; then
 # # TODO: Parameterize the version of the load balancer
-# docker pull public.ecr.aws/eks/aws-load-balancer-controller:v2.5.4
-# helm repo add eks https://aws.github.io/eks-charts
-# helm repo update eks
-# fi
+  sudo docker pull public.ecr.aws/eks/aws-load-balancer-controller:latest
+  helm repo add eks https://aws.github.io/eks-charts
+  helm repo update eks
+fi
 
 # TODO: If this is an upgrade, 
 # kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master"
 # Then run helm 'upgrade' rather than helm 'install'
-if [ "$type" -eq "install" ]; then
+if [[ "$type" == "install" ]]; then
     helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
     -n kube-system \
     --set region=$cluster_region \

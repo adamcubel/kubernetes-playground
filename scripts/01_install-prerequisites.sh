@@ -12,18 +12,18 @@ sudo dnf install -y \
                 jq
 sudo dnf groupinstall -y 'Development Tools'
 
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+# Install AWS CLI for RHEL9
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# sudo ./aws/install
 
 # Install Docker on Amazon Linux
 sudo dnf install -y docker
 
 # ... or Install Docker for RHEL9
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# sudo yum install -y yum-utils
+# sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+# sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Configure docker for the ec2-user
 sudo systemctl enable docker.service
@@ -32,8 +32,11 @@ sudo usermod -a -G docker ec2-user
 
 # Install Homebrew
 CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+cat >> ~/.bashrc << EOF
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ec2-user/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+EOF
+source ~/.bashrc
 
 # Install Terraform
 brew install terraform
@@ -47,7 +50,7 @@ chmod 700 /tmp/get_helm.sh
 /tmp/get_helm.sh && rm /tmp/get_helm.sh
 
 # Install k3d for minimal Kubernetes to run inside docker
-brew install k3d k3sup
+brew install k3d k3sup k9s
 
 # Install zarf - https://www.youtube.com/watch?v=7X2znDbN4-E&t=5s
 # brew tap defenseunicorns/tap && brew install zarf

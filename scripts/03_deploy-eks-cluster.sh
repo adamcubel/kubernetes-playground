@@ -17,18 +17,18 @@ while [ $# -gt 0 ]; do
 done
 
 pushd ../terraform
-
+set -x
 terraform init
 
-if ["$env" -eq "low"]; then
+if [[ "$env" == "low" ]]; then
 mkdir -p ~/terraform_providers
 terraform providers mirror ~/terraform_providers
 fi
 
+terraform plan -var-file="$vars_file" -out=tfplan -input=false
+
 # TODO: Make sure in the air gap that no attempt to pull down modules happens
-terraform apply -vars-file="$vars_file" -auto-approve -input=false
+terraform apply "-auto-approve" "-input=false" "tfplan"
 
-aws eks --region $(terraform output -raw region) update-kubeconfig \
-    --name $(terraform output -raw cluster_name)
-
+set +x
 popd

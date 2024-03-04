@@ -6,7 +6,7 @@ replicaCount: 1
 ## ref: https://hub.docker.com/r/apache/nifi/
 ##
 image:
-  repository: registry1.dso.mil/ironbank/opensource/apache/nifi
+  repository: apache/nifi
   tag: "1.25.0"
   pullPolicy: "IfNotPresent"
 
@@ -44,10 +44,8 @@ sts:
     #name: nifi
     annotations: {}
   hostAliases: []
-#    - ip: "1.2.3.4"
-#      hostnames:
-#        - example.com
-#        - example
+    # hostnames:
+    #   - dummy.nifi.sisyphus
 
   startupProbe:
     enabled: false
@@ -196,7 +194,9 @@ service:
   type: LoadBalancer
   httpsPort: 8443
   # nodePort: 30236
-  annotations: {}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
     # loadBalancerIP:
     ## Load Balancer sources
     ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
@@ -230,18 +230,19 @@ containerPorts: []
 ## Configure Ingress based on the documentation here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
-  enabled: true
-  hosts: ["dummy.nifi.cubel"]
+  enabled: false
+  hosts: ["dummy.nifi.sisyphus"]
   path: /
+  className: nlb
   annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internal
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-0e86717d47f340030,subnet-00789da9a1263eef6
-    # alb.ingress.kubernetes.io/certificate-arn: acm_ssl_arn
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-    alb.ingress.kubernetes.io/group.name: nifi
-    alb.ingress.kubernetes.io/actions.ssl-redirect: >-
+    kubernetes.io/ingress.class: "nlb"
+    nlb.ingress.kubernetes.io/scheme: internal
+    nlb.ingress.kubernetes.io/target-type: ip
+    nlb.ingress.kubernetes.io/subnets: subnet-0919642fededcf8b9, subnet-0d4d369cbbf5328c5, subnet-035770fcd3292746d
+    nlb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:313345638738:certificate/a0990fb6-c621-43fd-8b20-7a53c832bf6b
+    nlb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    # alb.ingress.kubernetes.io/group.name: nifi
+    nlb.ingress.kubernetes.io/actions.ssl-redirect: >-
         {
             "Type": "redirect",
             "RedirectConfig": {
@@ -278,7 +279,7 @@ persistence:
   #
   # To use a storage class that already exists on the Kubernetes cluster, we can simply reference it by name.
   # For example:
-  # storageClass: standard
+  # storageClass: "aws-pg-sc"
   #
   # The default storage class is used if this variable is not set.
 

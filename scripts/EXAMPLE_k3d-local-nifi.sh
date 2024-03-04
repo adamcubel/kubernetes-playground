@@ -12,8 +12,7 @@ git clone https://github.com/adamcubel/kubernetes-playground.git
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add dysnix https://dysnix.github.io/charts/
 cd helm/nifi
-helm repo update
-helm dep up
+helm repo update && helm dep up
 helm install nifi .
 
 # Troubleshooting commands

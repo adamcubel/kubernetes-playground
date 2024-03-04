@@ -6,7 +6,7 @@ replicaCount: 1
 ## ref: https://hub.docker.com/r/apache/nifi/
 ##
 image:
-  repository: registry1.dso.mil/ironbank/opensource/apache/nifi
+  repository: apache/nifi
   tag: "1.25.0"
   pullPolicy: "IfNotPresent"
 
@@ -44,10 +44,8 @@ sts:
     #name: nifi
     annotations: {}
   hostAliases: []
-#    - ip: "1.2.3.4"
-#      hostnames:
-#        - example.com
-#        - example
+    # hostnames:
+    #   - dummy.nifi.sisyphus
 
   startupProbe:
     enabled: false
@@ -231,13 +229,16 @@ containerPorts: []
 ##
 ingress:
   enabled: true
-  hosts: ["dummy.nifi.cubel"]
+  hosts: ["dummy.nifi.sisyphus"]
   path: /
+  spec:
+    ingressClassName:
+      alb
   annotations:
-    kubernetes.io/ingress.class: alb
+    # kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internal
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-0e86717d47f340030,subnet-00789da9a1263eef6
+    alb.ingress.kubernetes.io/subnets: subnet-0919642fededcf8b9, subnet-0d4d369cbbf5328c5, subnet-035770fcd3292746d
     # alb.ingress.kubernetes.io/certificate-arn: acm_ssl_arn
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/group.name: nifi

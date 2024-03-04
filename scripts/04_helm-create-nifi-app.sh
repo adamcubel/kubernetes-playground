@@ -37,9 +37,7 @@ else
     curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy_us-gov.json 
 fi
 
-aws iam create-policy \
-    --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://\"iam_policy.json\"
+aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://./iam_policy.json
 
 oidc_id=$(aws eks describe-cluster --name "$cluster_name" --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
@@ -70,7 +68,7 @@ cat > load-balancer-role-trust-policy.json <<EOF
 }
 EOF
 
-aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://\"load-balancer-role-trust-policy.json\"
+aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://./load-balancer-role-trust-policy.json
 
 aws iam attach-role-policy --policy-arn arn:aws:iam::$account_id:policy/AWSLoadBalancerControllerIAMPolicy --role-name AmazonEKSLoadBalancerControllerRole
 
@@ -155,7 +153,7 @@ cat <<EOF > trust-policy.json
 }
 EOF
 
-aws iam create-role --role-name AmazonEKS_EBS_CSI_DriverRole --assume-role-policy-document file://\"trust-policy.json\"
+aws iam create-role --role-name AmazonEKS_EBS_CSI_DriverRole --assume-role-policy-document file://./trust-policy.json
 
 aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --role-name AmazonEKS_EBS_CSI_DriverRole
 
@@ -183,6 +181,9 @@ kubectl create -f storage-class.yaml
 
 # Remove the original default storage class so pods can make Persistent Volume Claims
 kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
+# Create a certificate to upload into AWS Certificate Store
+# https://gist.github.com/taoyuan/39d9bc24bafc8cc45663683eae36eb1a
 
 # pushd ../helm/nifi
 # helm repo add cetic https://cetic.github.io/helm-charts

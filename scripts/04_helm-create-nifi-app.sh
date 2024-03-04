@@ -69,13 +69,12 @@ cat > vpc-cni-trust-policy.json <<EOF
 }
 EOF
 
-aws iam create-role --role-name AmazonEKSVPCCNIRole --assume-role-policy-document file://./vpc-cni-trust-policy.json
+aws iam create-role --role-name AmazonEKSVPCCNIRole --assume-role-policy-document file://./vpc-cni-trust-policy.json >/dev/null
 aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy --role-name AmazonEKSVPCCNIRole
 kubectl annotate serviceaccount -n kube-system aws-node eks.amazonaws.com/role-arn=arn:aws:iam::$account_id:role/AmazonEKSVPCCNIRole
 build_ver=$(kubectl describe daemonset aws-node --namespace kube-system | grep amazon-k8s-cni: | cut -d : -f 3)
-aws eks create-addon --cluster-name my-cluster --addon-name vpc-cni --addon-version $build_ver --service-account-role-arn arn:aws:iam::$account_id:role/AmazonEKSVPCCNIRole
+aws eks create-addon --cluster-name $cluster_name --addon-name vpc-cni --addon-version $build_ver --service-account-role-arn arn:aws:iam::$account_id:role/AmazonEKSVPCCNIRole
 
-eks_build=$(kubectl describe daemonset aws-node --namespace kube-system | grep amazon-k8s-cni: | cut -d : -f 3)
 curl -O https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/v1.16.2/config/master/aws-k8s-cni.yaml
 kubectl apply -f aws-k8s-cni.yaml
 
@@ -100,7 +99,7 @@ cat > load-balancer-role-trust-policy.json <<EOF
 }
 EOF
 
-aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://./load-balancer-role-trust-policy.json
+aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://./load-balancer-role-trust-policy.json >/dev/null
 
 aws iam attach-role-policy --policy-arn arn:aws:iam::$account_id:policy/AWSLoadBalancerControllerIAMPolicy --role-name AmazonEKSLoadBalancerControllerRole
 
@@ -185,7 +184,7 @@ cat <<EOF > trust-policy.json
 }
 EOF
 
-aws iam create-role --role-name AmazonEKS_EBS_CSI_DriverRole --assume-role-policy-document file://./trust-policy.json
+aws iam create-role --role-name AmazonEKS_EBS_CSI_DriverRole --assume-role-policy-document file://trust-policy.json >/dev/null
 
 aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --role-name AmazonEKS_EBS_CSI_DriverRole
 

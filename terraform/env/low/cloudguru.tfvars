@@ -1,4 +1,4 @@
-vpc_id = "vpc-0cb5790607f573e6f"
+vpc_id = "vpc-0b0b351e59b2f2635"
 region = "us-east-1"
 cluster_suffix = "sisyphus"
-subnet_ids = ["subnet-0de1a402810c6ba40", "subnet-05adeb63850d36d69", "subnet-0dc0933bece7ba3fe"]
+subnet_ids = ["subnet-06e0859ef6c2487c8", "subnet-07c8d920f8f03a8b2", "subnet-037ef0653c6e878af"]

@@ -5,3 +5,4 @@ helm repo add dysnix https://dysnix.github.io/charts/
 helm repo update
 
 helm install -f values.yaml nifi-sisyphus cetic/nifi
+zarf init --storage-class "aws-pg-sc"

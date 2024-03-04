@@ -279,7 +279,7 @@ persistence:
   #
   # To use a storage class that already exists on the Kubernetes cluster, we can simply reference it by name.
   # For example:
-  storageClass: "aws-pg-sc"
+  # storageClass: "aws-pg-sc"
   #
   # The default storage class is used if this variable is not set.
 

@@ -39,7 +39,7 @@ fi
 
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://"iam_policy.json"
+    --policy-document file://\"iam_policy.json\"
 
 oidc_id=$(aws eks describe-cluster --name "$cluster_name" --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
@@ -70,7 +70,7 @@ cat > load-balancer-role-trust-policy.json <<EOF
 }
 EOF
 
-aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://"load-balancer-role-trust-policy.json"
+aws iam create-role --role-name AmazonEKSLoadBalancerControllerRole --assume-role-policy-document file://\"load-balancer-role-trust-policy.json\"
 
 aws iam attach-role-policy --policy-arn arn:aws:iam::$account_id:policy/AWSLoadBalancerControllerIAMPolicy --role-name AmazonEKSLoadBalancerControllerRole
 
@@ -111,25 +111,25 @@ if [[ "$env" == "low" ]]; then
 fi
 
 # run helm 'upgrade' rather than helm 'install' if this is an upgrade
-# if [[ "$type" == "install" ]]; then
-#     helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
-#     -n kube-system \
-#     --set region=$cluster_region \
-#     --set vpcId=$cluster_vpc \
-#     --set clusterName=$cluster_name \
-#     --set serviceAccount.create=false \
-#     --set serviceAccount.name=aws-load-balancer-controller 
-# else
-#     kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master"
+if [[ "$type" == "install" ]]; then
+    helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+    -n kube-system \
+    --set region=$cluster_region \
+    --set vpcId=$cluster_vpc \
+    --set clusterName=$cluster_name \
+    --set serviceAccount.create=false \
+    --set serviceAccount.name=aws-load-balancer-controller 
+else
+    kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master"
 
-#     helm upgrade aws-load-balancer-controller eks/aws-load-balancer-controller \
-#     -n kube-system \
-#     --set region=$cluster_region \
-#     --set vpcId=$cluster_vpc \
-#     --set clusterName=$cluster_name \
-#     --set serviceAccount.create=false \
-#     --set serviceAccount.name=aws-load-balancer-controller 
-# fi
+    helm upgrade aws-load-balancer-controller eks/aws-load-balancer-controller \
+    -n kube-system \
+    --set region=$cluster_region \
+    --set vpcId=$cluster_vpc \
+    --set clusterName=$cluster_name \
+    --set serviceAccount.create=false \
+    --set serviceAccount.name=aws-load-balancer-controller 
+fi
 
 # Troubleshooting command to see if/that controller is installed
 # kubectl get deployment -n kube-system aws-load-balancer-controller
@@ -155,9 +155,9 @@ cat <<EOF > trust-policy.json
 }
 EOF
 
-aws iam create-role --role-name AmazonEKS_EBS_CSI_Driver --assume-role-policy-document file://"trust-policy.json"
+aws iam create-role --role-name AmazonEKS_EBS_CSI_DriverRole --assume-role-policy-document file://\"trust-policy.json\"
 
-aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --role-name AmazonEKS_EBS_CSI_Driver
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --role-name AmazonEKS_EBS_CSI_DriverRole
 
 aws eks create-addon \
  --cluster-name $cluster_name \
@@ -166,6 +166,7 @@ aws eks create-addon \
 
 # aws eks describe-addon-versions --addon-name aws-ebs-csi-driver
 
+# Create the AWS EBS Storage Class
 cat <<EOF > storage-class.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
@@ -180,11 +181,17 @@ parameters:
 EOF
 kubectl create -f storage-class.yaml
 
+# Remove the original default storage class so pods can make Persistent Volume Claims
+kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
 # pushd ../helm/nifi
+# helm repo add cetic https://cetic.github.io/helm-charts
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 # helm repo add dysnix https://dysnix.github.io/charts/
-# cd helm/nifi
-# helm repo update && helm dep up
-# helm install nifi .
+# helm repo update
+
+# helm install -f values.yaml nifi-sisyphus cetic/nifi
+# zarf init
+# popd
 
 set +x

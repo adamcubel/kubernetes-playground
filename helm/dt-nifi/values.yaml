@@ -43,10 +43,7 @@ sts:
     create: false
     #name: nifi
     annotations: {}
-  hostAliases:
-    - ip: "127.0.0.1"
-      hostnames:
-      - "dummy.nifi.sisyphus"
+  hostAliases: []
 
   startupProbe:
     enabled: false
@@ -240,7 +237,7 @@ ingress:
   # className: alb
   annotations: {}
   tls: []
-  hosts: ["dummy.nifi.sisyphus"]
+  hosts: []
   path: /
   # annotations:
     # kubernetes.io/ingress.class: "alb"

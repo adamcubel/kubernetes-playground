@@ -37,7 +37,7 @@ else
     curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy_us-gov.json 
 fi
 
-aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://./iam_policy.json
+aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://./iam_policy.json >/dev/null
 
 oidc_id=$(aws eks describe-cluster --name "$cluster_name" --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
@@ -227,7 +227,7 @@ kubectl get deployment metrics-server -n kube-system
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
 
-pushd ../helm/dt-nifi
+pushd ../helm/nifi
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add dysnix https://dysnix.github.io/charts/
 helm repo update

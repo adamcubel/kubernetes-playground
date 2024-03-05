@@ -20,33 +20,33 @@ data "aws_vpc" "cluster_vpc" {
   id = var.vpc_id
 }
 
-# resource "aws_security_group" "eks" {
-#   name        = "${var.cluster_suffix} eks cluster"
-#   description = "Allow traffic"
-#   vpc_id      = data.aws_vpc.cluster_vpc.id
+resource "aws_security_group" "eks" {
+  name        = "${var.cluster_suffix} eks cluster"
+  description = "Allow traffic"
+  vpc_id      = data.aws_vpc.cluster_vpc.id
 
-#   ingress {
-#     description      = "World"
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
+  ingress {
+    description      = "World"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
-#   egress {
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
-#   tags = merge({
-#     Name = "EKS ${var.cluster_suffix}",
-#     "kubernetes.io/cluster/${local.cluster_name}": "owned"
-#   }, var.tags)
-# }
+  tags = merge({
+    Name = "EKS ${var.cluster_suffix}",
+    "kubernetes.io/cluster/${local.cluster_name}": "owned"
+  }, var.tags)
+}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -58,7 +58,7 @@ module "eks" {
   subnet_ids                     = var.subnet_ids
   cluster_endpoint_public_access = false
   cluster_endpoint_private_access = true
-  # cluster_additional_security_group_ids = [aws_security_group.eks.id]
+  cluster_additional_security_group_ids = [aws_security_group.eks.id]
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
   }

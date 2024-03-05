@@ -213,6 +213,10 @@ kubectl create -f storage-class.yaml
 # Remove the original default storage class so pods can make Persistent Volume Claims
 kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
+# TODO: Add the following tags to your cluster subnets
+# kubernetes.io/role/internal-elb	1
+# kubernetes.io/cluster/nifi-sisyphus	shared
+
 # Create a certificate to upload into AWS Certificate Store
 # https://gist.github.com/taoyuan/39d9bc24bafc8cc45663683eae36eb1a
 

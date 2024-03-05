@@ -43,9 +43,10 @@ sts:
     create: false
     #name: nifi
     annotations: {}
-  hostAliases: []
-    # hostnames:
-    #   - dummy.nifi.sisyphus
+  hostAliases:
+    - ip: "127.0.0.1"
+      hostnames:
+      - "dummy.nifi.sisyphus"
 
   startupProbe:
     enabled: false
@@ -87,10 +88,10 @@ properties:
   # sensitiveKeyPrior: OldPasswordToChangeFrom
   algorithm: NIFI_PBKDF2_AES_GCM_256
   # use externalSecure for when inbound SSL is provided by nginx-ingress or other external mechanism
-  externalSecure: false
-  isNode: false
-  httpsPort: 8443
-  webProxyHost: # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
+  externalSecure: true
+  isNode: true # set to false if ldap is enabled
+  httpsPort: 8443 # set to 9443 if ldap is enabled
+  webProxyHost: dummy.nifi.sisyphus:443 # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
   clusterPort: 6007
   zkClientEnsembleTraker: false # https://issues.apache.org/jira/browse/NIFI-10481
   clusterNodeConnectionTimeout: '5 sec'
@@ -192,13 +193,16 @@ headless:
 # ui service
 service:
   type: LoadBalancer
-  httpsPort: 8443
+  httpsPort: 443
   # nodePort: 30236
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
     service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy : ELBSecurityPolicy-TLS13-1-2-2021-06
+
     # loadBalancerIP:
     ## Load Balancer sources
     ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
@@ -236,7 +240,7 @@ ingress:
   # className: alb
   annotations: {}
   tls: []
-  hosts: []
+  hosts: ["dummy.nifi.sisyphus"]
   path: /
   # annotations:
     # kubernetes.io/ingress.class: "alb"
@@ -424,6 +428,7 @@ certManager:
   replaceDefaultTrustStore: false
   additionalDnsNames:
     - localhost
+    - dummy.nifi.sisyphus
   refreshSeconds: 300
   resources:
     requests:

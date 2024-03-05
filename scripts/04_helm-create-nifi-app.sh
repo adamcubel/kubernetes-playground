@@ -214,6 +214,8 @@ kubectl create -f storage-class.yaml
 kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
 # TODO: Add the following tags to your cluster subnets
+
+cluster_subnets=$(aws eks describe-cluster --name $cluster_name | jq '.cluster.')
 # kubernetes.io/role/internal-elb	1
 # kubernetes.io/cluster/nifi-sisyphus	shared
 
@@ -221,13 +223,11 @@ kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.ku
 # https://gist.github.com/taoyuan/39d9bc24bafc8cc45663683eae36eb1a
 
 # pushd ../helm/nifi
-# helm repo add cetic https://cetic.github.io/helm-charts
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 # helm repo add dysnix https://dysnix.github.io/charts/
 # helm repo update
-
-# helm install -f values.yaml nifi-sisyphus cetic/nifi
-# zarf init
+# helm dep up
+# helm install -f values.yaml nifi ./
 # popd
 
 set +x

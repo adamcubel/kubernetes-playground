@@ -3,22 +3,22 @@
 # Start with amazonlinux or RHEL 9 VM
 # TODO: Add a switch that the caller can use to flip back and forth
 
-# Install the packages that we can get from DNF package manager
-sudo dnf update -y
-sudo dnf install -y \
+# Install the packages that we can get from yum package manager
+sudo yum update -y
+sudo yum install -y \
                 git \
                 unzip \
                 nano \
                 jq
-sudo dnf groupinstall -y 'Development Tools'
+sudo yum groupinstall -y 'Development Tools'
 
-# Install AWS CLI for RHEL9
+# Install AWS CLI for RHEL
 # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 # unzip awscliv2.zip
 # sudo ./aws/install
 
 # Install Docker on Amazon Linux
-sudo dnf install -y docker
+sudo yum install -y docker
 
 # ... or Install Docker for RHEL9
 # sudo yum install -y yum-utils

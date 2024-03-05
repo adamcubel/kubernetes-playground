@@ -1,3 +1,9 @@
+# WARNING THIS IS MOSTLY A MANUAL PROCESS
+# PLEASE VISIT FOR INSTRUCTIONS ON EXPORTING YOUR VM:
+#  IF RUNNING AMAZON LINUX, DO THIS FIRST. THE VAR NAME MIGHT BE GRUB_ENABLE_BLSCFG OR SOMETHING.
+#  I WAS TOO TIRED TO REMEMBER
+#  - https://repost.aws/knowledge-center/ami-resolve-import-export-blsc-error
+#  - https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport.html
 # TODO: Take inputs for bucket name and cloud so that 
 #   the bucket can be created if need be
 #   the bucket access policy can be applied
@@ -41,6 +47,15 @@ cat > ./file.json << EOF
 }
 EOF
 
+# TODO: Manually edit grub change to automated process
+# https://repost.aws/knowledge-center/ami-resolve-import-export-blsc-error
+
 INSTANCE_ID=$(cat /var/lib/cloud/data/instance-id)
 echo "aws ec2 create-instance-export-task --instance-id $INSTANCE_ID --target-environment vmware --export-to-s3-task file://\"file.json\""
 aws ec2 create-instance-export-task --instance-id $INSTANCE_ID --target-environment vmware --export-to-s3-task file://"file.json" >/dev/null
+
+# Import Steps
+# https://docs.aws.amazon.com/vm-import/latest/userguide/prerequisites.html
+# https://docs.aws.amazon.com/imagebuilder/latest/userguide/vm-import-export.html
+# https://docs.aws.amazon.com/vm-import/latest/userguide/required-permissions.html#vmimport-role
+# https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html

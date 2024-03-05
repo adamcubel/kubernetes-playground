@@ -215,19 +215,24 @@ kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.ku
 
 # TODO: Add the following tags to your cluster subnets
 
-cluster_subnets=$(aws eks describe-cluster --name $cluster_name | jq '.cluster.')
-# kubernetes.io/role/internal-elb	1
-# kubernetes.io/cluster/nifi-sisyphus	shared
+cluster_subnets=$(aws eks describe-cluster --name $cluster_name | jq --raw-output '.cluster.resourcesVpcConfig.subnetIds[]')
+for subnet in $cluster_subnets; do
+  aws ec2 create-tags --resources $subnet --tags Key=kubernetes.io/role/internal-elb,Value=1
+  aws ec2 create-tags --resources $subnet --tags Key=kubernetes.io/cluster/$cluster_name,Value=shared
+done
 
-# Create a certificate to upload into AWS Certificate Store
-# https://gist.github.com/taoyuan/39d9bc24bafc8cc45663683eae36eb1a
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl get deployment metrics-server -n kube-system
 
-# pushd ../helm/nifi
-# helm repo add bitnami https://charts.bitnami.com/bitnami
-# helm repo add dysnix https://dysnix.github.io/charts/
-# helm repo update
-# helm dep up
-# helm install -f values.yaml nifi ./
-# popd
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+
+pushd ../helm/dt-nifi
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add dysnix https://dysnix.github.io/charts/
+helm repo update
+helm dep up
+helm install -f values.yaml nifi ./
+popd
 
 set +x

@@ -1,8 +1,8 @@
 # Variables to use for deployment
 
 region = "us-east-1"
-vpc_id = "vpc-0b0b351e59b2f2635"
-eks_subnet_ids = ["subnet-06e0859ef6c2487c8", "subnet-07c8d920f8f03a8b2", "subnet-037ef0653c6e878af"]
+vpc_id = "vpc-00dcbcc94e3e1ecfe"
+eks_subnet_ids = ["subnet-03fe28429500ac1ef", "subnet-06585c320073f52bf", "subnet-0bdaf01619569adc2"]
 tags = {}
 
 # EKS Cluster specific knobs

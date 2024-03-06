@@ -148,7 +148,7 @@ resource "aws_iam_role" "aws_k8s_role" {
                 "ForAnyValue:StringEquals": {
                     "secretsmanager:ResourceTag/MISSION_SYSTEM_OWNED": "true"
                 }
-            },
+            }
         },
         {
             "Effect": "Allow",
@@ -368,7 +368,7 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "aws_k8s_role_attach" {
   count = var.eks_create_iam_role != false ? 1 : 0
-  role       = aws_iam_role.aws_k8s_role.name
+  role       = one(aws_iam_role.aws_k8s_role[*].name)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
@@ -400,169 +400,169 @@ resource "aws_security_group" "eks_security_group" {
   }, var.tags)
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
-}
+# resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
+#   from_port         = 80
+#   ip_protocol       = "tcp"
+#   to_port           = 80
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
+# resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
+#   from_port         = 443
+#   ip_protocol       = "tcp"
+#   to_port           = 443
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
-  from_port         = 6443
-  ip_protocol       = "tcp"
-  to_port           = 6443
-}
+# resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
+#   from_port         = 6443
+#   ip_protocol       = "tcp"
+#   to_port           = 6443
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_cluster_non_std_ipv4" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
-  from_port         = 30000
-  ip_protocol       = "tcp"
-  to_port           = 32767
-}
+# resource "aws_vpc_security_group_ingress_rule" "allow_cluster_non_std_ipv4" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv4         = data.aws_vpc.cluster_vpc.cidr_block
+#   from_port         = 30000
+#   ip_protocol       = "tcp"
+#   to_port           = 32767
+# }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
+# resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv4         = "0.0.0.0/0"
+#   ip_protocol       = "-1" # semantically equivalent to all ports
+# }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
-  count = var.eks_create_cluster_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_security_group.id
-  cidr_ipv6         = "::/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
+# resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
+#   count = var.eks_create_cluster_security_group == true ? 1 : 0
+#   security_group_id = one(concat(aws_security_group.eks_security_group[*].id))
+#   cidr_ipv6         = "::/0"
+#   ip_protocol       = "-1" # semantically equivalent to all ports
+# }
 
-data "aws_security_group" "eks_node_security_group" {
-  count = var.eks_create_node_security_group == true ? 0 : 1
-  name = var.eks_security_group_name
-  vpc_id = data.aws_vpc.cluster_vpc.id
-}
+# data "aws_security_group" "eks_node_security_group" {
+#   count = var.eks_create_node_security_group == true ? 0 : 1
+#   name = var.eks_security_group_name
+#   vpc_id = data.aws_vpc.cluster_vpc.id
+# }
 
-resource "aws_security_group" "eks_node_security_group" {
-  count = var.eks_create_node_security_group == true ? 1 : 0
-  name        = var.eks_node_security_group_name # rke2-cluster-internal-sg
-  description = "Allow traffic"
-  vpc_id      = var.vpc_id
+# resource "aws_security_group" "eks_node_security_group" {
+#   count = var.eks_create_node_security_group == true ? 1 : 0
+#   name        = var.eks_node_security_group_name # rke2-cluster-internal-sg
+#   description = "Allow traffic"
+#   vpc_id      = var.vpc_id
 
-  tags = merge({
-    Name = "EKS ${var.eks_cluster_name}",
-    "kubernetes.io/cluster/${var.eks_cluster_name}": "owned"
-  }, var.tags)
-}
+#   tags = merge({
+#     Name = "EKS ${var.eks_cluster_name}",
+#     "kubernetes.io/cluster/${var.eks_cluster_name}": "owned"
+#   }, var.tags)
+# }
 
-# I think this needs to be tightened up, not sure how far. 
-# Reference rke2-cluster-internal-sg
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
-  count = var.eks_create_node_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_node_security_group.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1"
-}
+# # I think this needs to be tightened up, not sure how far. 
+# # Reference rke2-cluster-internal-sg
+# resource "aws_vpc_security_group_ingress_rule" "node_allow_tls_ipv4" {
+#   count = var.eks_create_node_security_group == true ? 1 : 0
+#   security_group_id = one([aws_security_group.eks_node_security_group[*].id])
+#   cidr_ipv4         = "0.0.0.0/0"
+#   ip_protocol       = "-1"
+# }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  count = var.eks_create_node_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_node_security_group.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
+# resource "aws_vpc_security_group_egress_rule" "node_allow_all_traffic_ipv4" {
+#   count = var.eks_create_node_security_group == true ? 1 : 0
+#   security_group_id = one([aws_security_group.eks_node_security_group[*].id])
+#   cidr_ipv4         = "0.0.0.0/0"
+#   ip_protocol       = "-1" # semantically equivalent to all ports
+# }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
-  count = var.eks_create_node_security_group == true ? 1 : 0
-  security_group_id = aws_security_group.eks_node_security_group.id
-  cidr_ipv6         = "::/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
+# resource "aws_vpc_security_group_egress_rule" "node_allow_all_traffic_ipv6" {
+#   count = var.eks_create_node_security_group == true ? 1 : 0
+#   security_group_id = one([aws_security_group.eks_node_security_group[*].id])
+#   cidr_ipv6         = "::/0"
+#   ip_protocol       = "-1" # semantically equivalent to all ports
+# }
 
-locals {
-  eks_role_arn = one(concat([
-    data.aws_iam_role.aws_k8s_role[*].arn,
-    aws_iam_role.aws_k8s_role[*].arn,
-  ]))
+# locals {
+#   eks_role_arn = one([concat(
+#     data.aws_iam_role.aws_k8s_role[*].arn,
+#     aws_iam_role.aws_k8s_role[*].arn,
+#     )])
 
-  eks_key_arn = one(concat([
-    data.aws_kms_key.eks_key[*].arn,
-    aws_kms_key.eks_key[*].arn,
-  ]))
+#   eks_key_arn = one([concat(
+#     data.aws_kms_key.eks_key[*].arn,
+#     aws_kms_key.eks_key[*].arn,
+#   )])
 
-  eks_security_group_id = one(concat([
-    data.aws_security_group.eks_security_group[*].id,
-    aws_security_group.eks_security_group[*].id,
-  ]))
+#   eks_security_group_id = one([concat(
+#     data.aws_security_group.eks_security_group[*].id,
+#     aws_security_group.eks_security_group[*].id,
+#   )])
 
-  eks_node_security_group_id = one(concat([
-    data.aws_security_group.eks_node_security_group[*].id,
-    aws_security_group.eks_node_security_group[*].id,
-  ]))
-}
+#   eks_node_security_group_id = one([
+#     data.aws_security_group.eks_node_security_group[*].id,
+#     aws_security_group.eks_node_security_group[*].id,
+#   ])
+# }
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "19.15.3"
-  cluster_name = var.eks_cluster_name
-  cluster_version = var.eks_cluster_version
+# module "eks" {
+#   source  = "terraform-aws-modules/eks/aws"
+#   version = "19.15.3"
+#   cluster_name = var.eks_cluster_name
+#   cluster_version = var.eks_cluster_version
 
 
-  # create_cni_ipv6_iam_policy = var.eks_create_cni_ipv6_iam_policy
-  create_iam_role  = false
-  iam_role_arn = local.eks_role_arn
+#   # create_cni_ipv6_iam_policy = var.eks_create_cni_ipv6_iam_policy
+#   create_iam_role  = false
+#   iam_role_arn = local.eks_role_arn
 
-  create_kms_key = false
-  cluster_encryption_config = [
-    {
-      provider_key_arn = local.eks_key_arn
-      resources = ["secrets"]
-    }
-  ]
+#   create_kms_key = false
+#   cluster_encryption_config = [
+#     {
+#       provider_key_arn = local.eks_key_arn
+#       resources = ["secrets"]
+#     }
+#   ]
 
-  create_cluster_security_group = false 
-  cluster_security_group_id = local.eks_security_group_id
-  create_node_security_group = false 
-  node_security_group_id = local.eks_node_security_group_id
+#   create_cluster_security_group = false 
+#   cluster_security_group_id = local.eks_security_group_id
+#   create_node_security_group = false 
+#   node_security_group_id = local.eks_node_security_group_id
 
-  vpc_id                         = data.aws_vpc.cluster_vpc.id
-  subnet_ids                     = var.eks_subnet_ids
-  cluster_endpoint_public_access = false
-  cluster_endpoint_private_access = true
-  # cluster_additional_security_group_ids = [aws_security_group.eks.id]
-  eks_managed_node_group_defaults = {
-    ami_type = "AL2_x86_64"
-  }
+#   vpc_id                         = data.aws_vpc.cluster_vpc.id
+#   subnet_ids                     = var.eks_subnet_ids
+#   cluster_endpoint_public_access = false
+#   cluster_endpoint_private_access = true
+#   # cluster_additional_security_group_ids = [aws_security_group.eks.id]
+#   eks_managed_node_group_defaults = {
+#     ami_type = "AL2_x86_64"
+#   }
 
-  eks_managed_node_groups = {
-    one = {
-      name = "node-group-1"
-      instance_types = var.eks_node_group_instance_types
+#   eks_managed_node_groups = {
+#     one = {
+#       name = "node-group-1"
+#       instance_types = var.eks_node_group_instance_types
       
-      min_size     = var.eks_node_group_min_size
-      max_size     = var.eks_node_group_max_size
-      desired_size = var.eks_node_group_desired_size
-    }
+#       min_size     = var.eks_node_group_min_size
+#       max_size     = var.eks_node_group_max_size
+#       desired_size = var.eks_node_group_desired_size
+#     }
 
-    two = {
-      name = "node-group-2"
-      instance_types = var.eks_node_group_instance_types # ["t3.medium"]
+#     two = {
+#       name = "node-group-2"
+#       instance_types = var.eks_node_group_instance_types # ["t3.medium"]
 
-      min_size     = var.eks_node_group_min_size
-      max_size     = var.eks_node_group_max_size
-      desired_size = var.eks_node_group_desired_size
-    }
-  }
-}
+#       min_size     = var.eks_node_group_min_size
+#       max_size     = var.eks_node_group_max_size
+#       desired_size = var.eks_node_group_desired_size
+#     }
+#   }
+# }

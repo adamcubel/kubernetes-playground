@@ -1,6 +1,3 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
 variable "region" {
   description = "AWS region"
   type        = string
@@ -59,8 +56,8 @@ variable "eks_create_iam_role" {
   default = false
 }
 
-variable "eks_role_name" {
-  description = "name of the role to use for the EKS cluster"
+variable "eks_role_arn" {
+  description = "ARN of the role to use for the EKS cluster"
   type = string
   default = ""
 }
@@ -83,8 +80,8 @@ variable "eks_create_cluster_security_group" {
   default = false
 }
 
-variable "eks_security_group_name" {
-  description = "collection of tags used for resources deployed in this module"
+variable "eks_security_group_id" {
+  description = "ID of Security Group to use when deploying EKS"
   type = string
   default = "tf-eks-sg"
 }
@@ -95,9 +92,14 @@ variable "eks_create_node_security_group" {
   default = false
 }
 
-variable "eks_node_security_group_name" {
-  description = "name of the EKS security group to use"
+variable "eks_node_security_group_id" {
+  description = "ID of Security Group to use for nodes when deploying EKS"
   default = "tf-eks-node-sg"
+}
+
+variable "number_of_node_groups" {
+  type = number
+  default = 2
 }
 
 variable "tags" {

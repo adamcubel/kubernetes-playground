@@ -15,13 +15,13 @@ eks_node_group_max_size = 4
 eks_node_group_desired_size = 2
 
 eks_create_iam_role = true
-eks_role_name = "aws-k8s-role"
+eks_role_arn = "aws-k8s-role"
 
 eks_create_kms_key = true
 eks_kms_key_arn = ""
 
 eks_create_cluster_security_group = true
-eks_security_group_name = "sisyphus-cluster-sg"
+eks_security_group_id = "sisyphus-cluster-sg"
 
 eks_create_node_security_group = true
-eks_node_security_group_name = "sisyphus-cluster-node-sg"
+eks_node_security_group_id = "sisyphus-cluster-node-sg"

@@ -227,6 +227,16 @@ kubectl get deployment metrics-server -n kube-system
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
 
+# Install prometheus 
+kubectl create namespace prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm upgrade -i prometheus prometheus-community/prometheus \
+    --namespace prometheus \
+    --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
+
+# Set this as the URL in gradana
+# prometheus-server.prometheus.svc.cluster.local
+
 pushd ../helm/nifi
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add dysnix https://dysnix.github.io/charts/

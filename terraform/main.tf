@@ -43,7 +43,7 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    for i in range(1, var.number_of_node_groups) : "node_${i}" => {
+    for i in range(0, var.eks_number_of_node_groups) : "node_${i}" => {
       name = "node-group-${i}"
       instance_types = var.eks_node_group_instance_types     
       min_size     = var.eks_node_group_min_size

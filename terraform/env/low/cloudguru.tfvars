@@ -9,6 +9,7 @@ tags = {}
 eks_cluster_name = "sisyphus"
 eks_cluster_version = "1.29"
 
+eks_number_of_node_groups = 2
 eks_node_group_instance_types = ["t3.medium"]
 eks_node_group_min_size = 1
 eks_node_group_max_size = 4

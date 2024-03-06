@@ -97,7 +97,7 @@ variable "eks_node_security_group_id" {
   default = "tf-eks-node-sg"
 }
 
-variable "number_of_node_groups" {
+variable "eks_number_of_node_groups" {
   type = number
   default = 2
 }

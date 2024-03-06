@@ -28,9 +28,11 @@ if [[ "$env" == "low" ]]; then
     # Will be prompted for username and password
     # Instructions for getting an iron bank account are here: 
     # https://docs-ironbank.dso.mil/quickstart/consumer-onboarding/
-    sudo docker login registry1.dso.mil
-    sudo docker pull registry1.dso.mil/ironbank/opensource/apache/nifi:1.25.0
-    sudo docker pull registry1.dso.mil/ironbank/bitnami/zookeeper:3.9.1
+
+    # TODO: Repoint Helm charts to REPO ONE Registry
+    # sudo docker login registry1.dso.mil
+    # sudo docker pull registry1.dso.mil/ironbank/opensource/apache/nifi:1.25.0
+    # sudo docker pull registry1.dso.mil/ironbank/bitnami/zookeeper:3.9.1
 
     curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 else
